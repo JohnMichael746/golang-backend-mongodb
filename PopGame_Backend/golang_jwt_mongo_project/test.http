@@ -3,6 +3,7 @@
 @host = {{hostname}}:{{port}}
 
 POST {{host}}/api/token
+Content-Type: raw
 
 {
     "client_id": "77004ea213d5fc71acf74a8c9c6795fb",
@@ -11,7 +12,24 @@ POST {{host}}/api/token
 ###
 
 GET {{host}}/api/getbanner
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6Ijc1MzUxNDBhYzVjZjdkMjAxYzRjYjQ1OTNjODU2MzVhZWQ5ODgyOTljZTgxYjcyNDQ3ZWQ5ZjA5ZWIwZjgzNDgzOTMyYjY3NGQ4OTJmMDcwIn0.eyJhdWQiOiIxIiwianRpIjoiNzUzNTE0MGFjNWNmN2QyMDFjNGNiNDU5M2M4NTYzNWFlZDk4ODI5OWNlODFiNzI0NDdlZDlmMDllYjBmODM0ODM5MzJiNjc0ZDg5MmYwNzAiLCJpYXQiOjE2NjYxNzg1NDIsIm5iZiI6MTY2NjE3ODU0MiwiZXhwIjoxNjk3NzE0NTQyLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.Lhi6GRfzWQR_-0NbcJV9wgMXOuGtp9ok0oHcCQJi4EtDxHGjKxBmbXoLLU5U-7VYd7_zr6b__nqFGRAW20fkdTniBJcamDz4QZRDZT4UZNoj-flxMzO8PmIcEHfDTzBUwf-j6mfILc25WVPBS32d0VQ310SOkFv2pp7qbRf6arwsKnA3MUtB4sTAq4eZzMjQhlkBnAZ4HerMj5bKmdFDidi97dHHET2W1gkt0FRbm0VJKYPKtKCucgdNHvvj6Tz3hAo8URsJ6lFquuU4j3HrdyyYf5Lw3HIf14_QxyKqFIwI8hnMip5QMdgsAW5uZ_XiSeM7V5MEWS8fWim7hOVyjVPoerMTeelIWauW6yGAtQTbxv4lMu96k7VxGJdLDF1gki-FRc6B8slehd5dED38Hg5tQZF57n0IH-AHPxOMuPqS7fRft_zXUwHZK1hImxkH5n3JiFuFP4KeM-CcHGh0q6tUmzvsDQPmmVNpP5_LR8LV7yF5nnpSI4SeyQLV5DNQ2j7NIPo6obOA5q1RXBFo8LVHYGvKRGsp-u_ZXwq5Ytd1qY2fNfRTjBIPeIm_MfT8FkIVPpK16Cmn6wULgj8W8S1zQb1y8qJo-lGHTS-5CZI_L2OYDiRG00XNMXHUVMg_QgzdWnxUMqp8k-1FWO8IkE3lcuGhgIhyxSjIx2-hycQ
-Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJDbGllbnRfaWQiOiI3NzAwNGVhMjEzZDVmYzcxYWNmNzRhOGM5YzY3OTVmYiIsIkNsaWVudF9zZWNyZXQiOiI4YTVkYTUyZWQxMjY0NDdkMzU5ZTcwYzA1NzIxYThhYSIsImV4cCI6MTY5Nzg1MDc0Mn0.Jl06Ms42wRr2WicmHt2WXEVhAbOrgKK5Jqe8JUVI5ng
 Accept: application/json
+###
+
+POST {{host}}/users/signup
+Content-Type: application/json
+
+{
+    "client_id": "77004ea213d5fc71acf74a8c9c6795fb",
+    "client_secret": "8a5da52ed126447d359e70c05721a8aa",
+    "first_name": "John",
+    "last_name": "Doe",
+    "Password": "mypassword",
+    "email": "johndoe@example.com",
+    "phone": "12345678900",
+    "user_type": "ADMIN"
+}
+###
+
+GET {{host}}/users
 ###

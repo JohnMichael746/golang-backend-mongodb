@@ -29,6 +29,12 @@ type SignedDetails struct {
 	jwt.StandardClaims
 }
 
+type TokenDetails struct {
+	Client_id     string
+	Client_secret string
+	jwt.StandardClaims
+}
+
 var userCollection *mongo.Collection = database.OpenCollection(database.Client, "user")
 
 var SECRET_KEY string = os.Getenv("SECRET_KEY")
@@ -60,6 +66,25 @@ func GenerateAllTokens(email string, firstName string, lastName string, userType
 	}
 
 	return token, refreshToken, err
+}
+
+func GenerateToken(client_id string, client_secret string, expires time.Time) (signedToken string, err error) {
+	claims := &TokenDetails{
+		Client_id:     client_id,
+		Client_secret: client_secret,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expires.Unix(),
+		},
+	}
+
+	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(SECRET_KEY))
+
+	if err != nil {
+		log.Panic(err)
+		return
+	}
+
+	return token, err
 }
 
 func ValidateToken(signedToken string) (claims *SignedDetails, msg string) {

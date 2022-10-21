@@ -9,6 +9,8 @@ import (
 // ill add the mongodb driver later ...
 type User struct {
 	ID            primitive.ObjectID `bson:"_id"`
+	Client_id     *string            `json:"client_id" validate:"required,min=2,max=100"`
+	Client_secret *string            `json:"client_secret" validate:"required,min=6"`
 	First_name    *string            `json:"first_name" validate:"required,min=2,max=100"`
 	Last_name     *string            `json:"last_name" validate:"required,min=2,max=100"`
 	Password      *string            `json:"Password" validate:"required,min=6"`

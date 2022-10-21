@@ -73,6 +73,20 @@ func Signup() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while checking for the email"})
 		}
 
+		count, err = userCollection.CountDocuments(ctx, bson.M{"client_id": user.Client_id})
+		defer cancel()
+		if err != nil {
+			log.Panic(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while checking for the client_id"})
+		}
+
+		count, err = userCollection.CountDocuments(ctx, bson.M{"client_secret": user.Client_secret})
+		defer cancel()
+		if err != nil {
+			log.Panic(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while checking for the client_secret"})
+		}
+
 		password := HashPassword(*user.Password)
 		user.Password = &password
 
@@ -144,6 +158,59 @@ func Login() gin.HandlerFunc {
 			return
 		}
 		c.JSON(http.StatusOK, foundUser)
+	}
+}
+
+func GetToken() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		var user models.User
+		var foundUser models.User
+
+		if err := c.BindJSON(&user); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		err := userCollection.FindOne(ctx, bson.M{"client_id": user.Client_id}).Decode(&foundUser)
+		defer cancel()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Client id is incorrect"})
+			return
+		}
+
+		if foundUser.Client_id == nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "user not found"})
+		}
+
+		expires := time.Now().Local().Add(time.Hour * 365 * time.Duration(24))
+
+		token, err := helper.GenerateToken(*user.Client_id, *user.Client_secret, expires)
+		helper.UpdateAllTokens(token, "", foundUser.User_id)
+
+		err = userCollection.FindOne(ctx, bson.M{"client_id": foundUser.Client_id}).Decode(&foundUser)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		data := bson.M{
+			"id":               foundUser.ID,
+			"user_id":          foundUser.User_id,
+			"application_name": "Api Sample App",
+			"created_at":       foundUser.Created_at,
+			"updated_at":       foundUser.Updated_at,
+			"token":            token,
+			"token_expires":    expires.String(),
+		}
+
+		result := bson.M{
+			"status":         true,
+			"status_code":    100,
+			"status_message": "Token generated successfully",
+			"data":           data,
+		}
+		c.JSON(http.StatusOK, result)
 	}
 }
 
